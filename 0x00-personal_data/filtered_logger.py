@@ -9,8 +9,8 @@ import re
 def filter_datum(fields, redaction, message, separator) -> str:
     """Filter Information"""
     for field in fields:
-        message = re.sub(r'{}=(.*?){}'.format(field, separator),
-                         '{}={}{}'.format(field, redaction, separator), message)
+        message = re.sub(rf'{field}=(.*?){separator}',
+                         f'{field}={redaction}{separator}', message)
     return message
 
 class RedactingFormatter(logging.Formatter):
@@ -25,5 +25,6 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """Format Logged message"""
-        return filter_datum(list(self.FIELDS), self.REDACTION,
-                                   str(record), self.SEPARATOR)
+        msg = super(RedactingFormatter, self).format(record)
+        return filter_datum(self.FIELDS, self.REDACTION, msg,
+                                    self.SEPARATOR)
