@@ -54,9 +54,9 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> mysql.connector.connection.MYSQLConnection:
     """ Prepare a DB connection object """
-    connection = mysql.connector.connect(host = PERSONAL_DATA_DB_HOST,
+    conn = mysql.connector.connect(host = PERSONAL_DATA_DB_HOST,
                                          user = PERSONAL_DATA_DB_USERNAME,
                                          password = PERSONAL_DATA_DB_PASSWORD,
                                          database = PERSONAL_DATA_DB_NAME
                                          )
-    return connection
+    return conn
