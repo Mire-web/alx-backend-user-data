@@ -4,15 +4,15 @@ Filter Logging Information for security
 """
 import re
 import mysql.connector
-import os
+from os import environ
 from typing import List
 import logging
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
-PERSONAL_DATA_DB_USERNAME = (os.getenv('PERSONAL_DATA_DB_USERNAME') or 'root')
-PERSONAL_DATA_DB_PASSWORD = (os.getenv('PERSONAL_DATA_DB_PASSWORD') or '')
-PERSONAL_DATA_DB_HOST = (os.getenv('PERSONAL_DATA_DB_HOST') or 'localhost')
-PERSONAL_DATA_DB_NAME = (os.getenv('PERSONAL_DATA_DB_NAME'))
+# PERSONAL_DATA_DB_USERNAME = (os.getenv('PERSONAL_DATA_DB_USERNAME') or 'root')
+# PERSONAL_DATA_DB_PASSWORD = (os.getenv('PERSONAL_DATA_DB_PASSWORD') or '')
+# PERSONAL_DATA_DB_HOST = (os.getenv('PERSONAL_DATA_DB_HOST') or 'localhost')
+# PERSONAL_DATA_DB_NAME = (os.getenv('PERSONAL_DATA_DB_NAME'))
 
 
 def filter_datum(fields: List[str], redaction: str,
@@ -54,12 +54,16 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> mysql.connector.connection.MYSQLConnection:
-    """ Prepare a DB connection object """
-    conn = mysql.connector.connection.MYSQLConnection(
-        user=PERSONAL_DATA_DB_USERNAME,
-        password=PERSONAL_DATA_DB_PASSWORD,
-        host=PERSONAL_DATA_DB_HOST,
-        database=PERSONAL_DATA_DB_NAME
-    )
-    return conn
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """ Returns a connector to a MySQL database """
+    username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = environ.get("PERSONAL_DATA_DB_NAME")
+
+    cnx = mysql.connector.connection.MySQLConnection(user=username,
+                                                     password=password,
+                                                     host=host,
+                                                     database=db_name)
+    return cnx
