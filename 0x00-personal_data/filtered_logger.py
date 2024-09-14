@@ -14,6 +14,7 @@ PERSONAL_DATA_DB_PASSWORD = (os.getenv('PERSONAL_DATA_DB_PASSWORD') or '')
 PERSONAL_DATA_DB_HOST = (os.getenv('PERSONAL_DATA_DB_HOST') or 'localhost')
 PERSONAL_DATA_DB_NAME = (os.getenv('PERSONAL_DATA_DB_NAME'))
 
+
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """Obfuscate Message string"""
@@ -52,11 +53,13 @@ def get_logger() -> logging.Logger:
     logger.addHandler(console_handler)
     return logger
 
+
 def get_db() -> mysql.connector.connection.MYSQLConnection:
     """ Prepare a DB connection object """
-    conn = mysql.connector.connect(host = PERSONAL_DATA_DB_HOST,
-                                         user = PERSONAL_DATA_DB_USERNAME,
-                                         password = PERSONAL_DATA_DB_PASSWORD,
-                                         database = PERSONAL_DATA_DB_NAME
-                                         )
+    conn = mysql.connector.connection.MYSQLConnection(
+        host=PERSONAL_DATA_DB_HOST,
+        user=PERSONAL_DATA_DB_USERNAME,
+        password=PERSONAL_DATA_DB_PASSWORD,
+        database=PERSONAL_DATA_DB_NAME
+    )
     return conn
