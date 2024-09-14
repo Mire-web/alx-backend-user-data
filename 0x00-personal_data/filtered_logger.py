@@ -3,11 +3,16 @@
 Filter Logging Information for security
 """
 import re
+import mysql.connector
+import os
 from typing import List
 import logging
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
-
+PERSONAL_DATA_DB_USERNAME = (os.getenv('PERSONAL_DATA_DB_USERNAME') or 'root')
+PERSONAL_DATA_DB_PASSWORD = (os.getenv('PERSONAL_DATA_DB_PASSWORD') or '')
+PERSONAL_DATA_DB_HOST = (os.getenv('PERSONAL_DATA_DB_HOST') or 'localhost')
+PERSONAL_DATA_DB_NAME = (os.getenv('PERSONAL_DATA_DB_NAME'))
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
@@ -46,3 +51,12 @@ def get_logger() -> logging.Logger:
     console_handler.setFormatter(RedactingFormatter.FORMAT)
     logger.addHandler(console_handler)
     return logger
+
+def get_db() -> mysql.connector.connection.MYSQLConnection:
+    """ Prepare a DB connection object """
+    connection = mysql.connector.connect(host = PERSONAL_DATA_DB_HOST,
+                                         user = PERSONAL_DATA_DB_USERNAME,
+                                         password = PERSONAL_DATA_DB_PASSWORD,
+                                         database = PERSONAL_DATA_DB_NAME
+                                         )
+    return connection
